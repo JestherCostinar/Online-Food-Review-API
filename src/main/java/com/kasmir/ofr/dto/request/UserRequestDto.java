@@ -1,11 +1,20 @@
 package com.kasmir.ofr.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+
 public class UserRequestDto {
 
     private Long id;
+    @NotEmpty
     private String firstName;
+    @NotEmpty
     private String lastName;
+    @NotEmpty
+    @Email
     private String email;
+
+    @NotEmpty
     private String password;
 
     public Long getId() {

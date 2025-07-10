@@ -4,6 +4,7 @@ import com.kasmir.ofr.dto.request.UserRequestDto;
 import com.kasmir.ofr.dto.response.UserResponseDto;
 import com.kasmir.ofr.entity.User;
 import com.kasmir.ofr.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto user) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
@@ -37,7 +38,7 @@ public class UserController {
 
     @PutMapping("{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
-                                                      @RequestBody UserRequestDto userRequestDto) {
+                                                      @Valid @RequestBody UserRequestDto userRequestDto) {
         userRequestDto.setId(id);
         return new ResponseEntity<>(userService.updateUser(userRequestDto), HttpStatus.OK);
     }
