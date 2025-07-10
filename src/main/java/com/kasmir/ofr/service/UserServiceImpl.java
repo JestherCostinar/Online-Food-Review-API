@@ -6,12 +6,16 @@ import com.kasmir.ofr.entity.User;
 import com.kasmir.ofr.exception.EmailAlreadyExistException;
 import com.kasmir.ofr.mapper.UserMapper;
 import com.kasmir.ofr.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepository userRepository;
 
@@ -20,17 +24,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto createUser(UserRequestDto user) {
-        System.out.println(user.getEmail());
-        Optional<User> fetchEmail = userRepository.findByEmail(user.getEmail());
-        System.out.println(fetchEmail);
+    public UserResponseDto createUser(UserRequestDto userRequestDto) {
+        log.info("Create user with email: {}", userRequestDto.getEmail());
 
-        if (fetchEmail.isPresent()) {
+        if (userRepository.existsByEmail(userRequestDto.getEmail())) {
             throw new EmailAlreadyExistException("User Email Already exist in the record");
         }
 
-        User savedUser = UserMapper.convertToUser(user);
-        UserResponseDto userResponse = UserMapper.convertToUserResponse(userRepository.save(savedUser));
-        return userResponse;
+        User user = UserMapper.convertToUser(userRequestDto);
+        User savedUser = userRepository.save(user);
+
+        return UserMapper.convertToUserResponse(savedUser);
     }
+
+
 }
