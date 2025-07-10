@@ -66,7 +66,29 @@ public class UserServiceImpl implements UserService {
         User user = optionalUser.get();
         return UserMapper.convertToUserResponse(user);
     }
-    
+
+    @Override
+    public UserResponseDto updateUser(UserRequestDto userRequestDto) {
+        Long userId = userRequestDto.getId();
+
+        log.info("Updating user with ID: {}", userId);
+
+        Optional<User> retrievedUser = userRepository.findById(userId);
+        if (retrievedUser.isEmpty()) {
+            log.warn("User not found with ID: {}", userId);
+            throw new ResourceNotFoundException("User", "id", userId);
+        }
+
+        User user = retrievedUser.get();
+        user.setFirstName(userRequestDto.getFirstName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setEmail(userRequestDto.getEmail());
+        user.setPassword(userRequestDto.getPassword());
+        User savedUser = userRepository.save(user);
+        log.info("User updated successfully. ID: {}", savedUser.getId());
+
+        return UserMapper.convertToUserResponse(savedUser);
+    }
 
 
 }
