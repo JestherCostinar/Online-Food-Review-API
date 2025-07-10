@@ -90,5 +90,19 @@ public class UserServiceImpl implements UserService {
         return UserMapper.convertToUserResponse(savedUser);
     }
 
+    @Override
+    public void deleteUser(Long id) {
+        log.info("Attempting to delete user with ID: {}", id);
+
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            log.warn("User not found with ID: {}", id);
+            throw new ResourceNotFoundException("User", "id", id);
+        }
+
+        userRepository.delete(optionalUser.get());
+    }
+
 
 }
